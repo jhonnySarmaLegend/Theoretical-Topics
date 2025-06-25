@@ -4,3 +4,4 @@
 ## 4. OOPs : https://www.interviewbit.com/oops-interview-questions/
 ## 5. O.S. : https://www.linkedin.com/posts/the-ashishalok_operating-system-love-babbar-notes-activity-7212172536946573312-G8u-
 ## 6. C.N. : https://www.interviewbit.com/networking-interview-questions/
+## 7. DBMS : https://www.linkedin.com/posts/gaurav-yadav-732b67207_dbms-notes-activity-7062143818715869185-QtmW
