@@ -1,7 +1,7 @@
 # Theoretical-Questions
 
-### All java related can be found here : https://jenkov.com/tutorials
-
+### All java related can be found here : jenkov.com
+](https://jenkov.com/)
 ## 1. Git, GitHub, GitLab, Gerrit : https://www.interviewbit.com/git-interview-questions/
 ## 2. Docker : https://www.geeksforgeeks.org/devops/docker-cheat-sheet/#installation-commands
 ## 4. OOPs : https://www.interviewbit.com/oops-interview-questions/
