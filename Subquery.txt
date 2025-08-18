@@ -1,0 +1,80 @@
+**Subqueries** are queries nested inside another SQL statement. They can be classified as:
+
+- **Non-correlated (independent) subquery**:  
+  The subquery can run on its own—its result doesn’t depend on the outer query.  
+
+- **Correlated (dependent) subquery**:  
+  The subquery refers to columns from the outer query and must be re-evaluated for each row of the outer query.
+
+---
+
+## 1. Non-Correlated Subquery
+
+**Use case:** Find employees whose department has `location_id = 1700`.
+
+```sql
+SELECT employee_id,
+       first_name,
+       department_id
+FROM employees
+WHERE department_id IN (
+    SELECT department_id
+    FROM departments
+    WHERE location_id = 1700
+);
+```
+
+- The inner query  
+  ```sql
+  SELECT department_id
+  FROM departments
+  WHERE location_id = 1700;
+  ```  
+  runs once, producing a list of department IDs.
+- The outer query simply filters `employees.department_id` against that list.
+
+---
+
+## 2. Correlated Subquery
+
+**Use case:** Find employees who earn more than the **average salary of their own department**.
+
+```sql
+SELECT e.employee_id,
+       e.first_name,
+       e.salary,
+       e.department_id
+FROM employees e
+WHERE e.salary >
+    (
+      SELECT AVG(e2.salary)
+      FROM employees e2
+      WHERE e2.department_id = e.department_id
+    );
+```
+
+- The subquery  
+  ```sql
+  SELECT AVG(e2.salary)
+  FROM employees e2
+  WHERE e2.department_id = e.department_id
+  ```  
+  references `e.department_id` from the outer query.
+- For **each** row in `employees e`, the subquery recalculates that department’s average salary and compares `e.salary` against it.
+
+---
+
+## Key Differences
+
+| Aspect                     | Non-Correlated                      | Correlated                                         |
+|----------------------------|-------------------------------------|----------------------------------------------------|
+| Dependency on outer query  | None                                | Subquery refers to outer-query columns             |
+| Execution                  | Runs **once**                       | Runs **once per row** of the outer query           |
+| Use cases                  | Static filters, membership checks   | Row-by-row comparisons, running totals, complex per-row logic |
+
+---
+
+### Summary
+
+- **Non-correlated** subqueries are self-contained and efficient when the inner result is reused.
+- **Correlated** subqueries allow per-row logic but can be slower, since they execute repeatedly.
