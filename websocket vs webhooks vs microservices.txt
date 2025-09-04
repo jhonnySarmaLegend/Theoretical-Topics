@@ -1,0 +1,99 @@
+**WebSockets**, **Webhooks**, and **Microservices** are three distinct concepts in modern distributed systems. They address different needs—real-time communication, event-driven callbacks, and service architecture respectively.  
+
+---
+
+## 1. WebSocket  
+*A protocol for full-duplex, real-time communication over a single TCP connection.*
+
+- **How it works**  
+  - Client (browser/app) opens a WebSocket handshake over HTTP.  
+  - Once “upgraded,” server and client keep the TCP socket open.  
+  - Either side can push messages at any time.
+
+- **Key Characteristics**  
+  - Bidirectional: client ↔ server.  
+  - Low latency: ideal for chat, live feeds, multiplayer games.  
+  - Connection-oriented: you pay the cost of keeping sockets open.
+
+- **Example Use Case**  
+  ```js
+  // Browser-side (JavaScript)
+  const sock = new WebSocket("wss://example.com/updates");
+  sock.onmessage = e => console.log("Server says:", e.data);
+  sock.send("Hello server!");
+  ```
+
+---
+
+## 2. Webhook  
+*A lightweight HTTP callback: when an event happens, one system makes an HTTP POST to a pre-configured URL.*
+
+- **How it works**  
+  - You register a URL (the webhook endpoint) with Service A.  
+  - When Service A experiences an event (e.g., “payment succeeded”), it sends an HTTP request to your URL with event data.  
+  - Your server processes it and responds (often with 2xx).
+
+- **Key Characteristics**  
+  - Unidirectional: server → your endpoint.  
+  - Event-driven: only sends when something happens.  
+  - No persistent connection; each event is a separate HTTP request.
+
+- **Example Use Case**  
+  1. You configure GitHub to POST to `https://your-app.com/git-events` on each push.  
+  2. Your app reads payload and triggers CI/CD pipeline.
+
+---
+
+## 3. Microservices  
+*An architectural style in which an application is composed of many small, independently deployable services.*
+
+- **How it works**  
+  - Each microservice owns a single business capability (e.g., user-management, billing).  
+  - Services communicate over well-defined APIs (REST, gRPC, message queues, even WebSockets).  
+  - Each can be developed, deployed, and scaled independently.
+
+- **Key Characteristics**  
+  - **Decentralized**: own database, tech stack.  
+  - **Resilient**: one service can fail without bringing down the whole system.  
+  - **Complexity**: requires service discovery, API gateways, orchestration.
+
+- **Example Use Case**  
+  ```
+  [Auth Service] ←→ [API Gateway] ←→ [Order Service]
+                     ↑                 ↑
+                   Webhooks          WebSockets
+                     ↓                 ↓
+              [Payment Provider]   [Live Order Tracker]
+  ```
+
+---
+
+## 4. Side-by-Side Comparison
+
+| Aspect               | WebSocket                                      | Webhook                                           | Microservices                                     |
+|----------------------|-------------------------------------------------|---------------------------------------------------|----------------------------------------------------|
+| Communication Model  | Bidirectional, persistent socket                | Unidirectional, one-off HTTP callback             | Many independent services communicating via APIs   |
+| Use Case             | Real-time chat, live dashboards, gaming         | Event notifications (Git pushes, payment events)  | Large applications split into focused components   |
+| Connection Overhead  | High (long-lived TCP connections)               | Low (short HTTP requests per event)               | Depends on inter-service protocol                  |
+| Scaling Considerations | Need socket management, load balancers        | Easy: scale endpoint servers, retry failed calls  | Complex: service discovery, distributed tracing   |
+| Coupling             | Tighter (long-lived session)                    | Looser (event producer doesn’t know consumer internals) | Loose at service boundary, tight within service    |
+
+---
+
+## 5. When to Use Which?
+
+- **WebSocket**:  
+  - You need **instant, two-way** updates (e.g., collaborative editing, live sports scores).  
+
+- **Webhook**:  
+  - You want event-driven integration **without polling** (e.g., build systems, CRM updates).  
+
+- **Microservices**:  
+  - Your application’s domain has **multiple distinct capabilities** that need to evolve, deploy, and scale independently.
+
+---
+
+### **Summary**  
+- **WebSockets** keep a channel open for real-time, bidirectional messaging.  
+- **Webhooks** fire HTTP calls when specific events occur—no persistent connection needed.  
+- **Microservices** organize your system into small, autonomous services that may use WebSockets or Webhooks (among other protocols) to communicate.
